@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\FONTS">
+      <UniqueIdentifier>{b5e82806-bf9b-4fdf-b17c-c35282c021a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\IMAGES">
+      <UniqueIdentifier>{1d793ccc-0d22-4eea-8d0e-c5b5a5270a40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameMode">
+      <UniqueIdentifier>{8261a9e5-ac90-4c09-a0b6-6e80efed8958}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Globals">
+      <UniqueIdentifier>{cc817173-0297-42e7-a8ed-8d15299dcdc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameMode">
+      <UniqueIdentifier>{03a70ba0-9373-438a-a4d4-d0f517a6dfea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gloabals">
+      <UniqueIdentifier>{bef91be7-b8e0-4a25-bd00-d2f7acf6a557}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GamePlay">
+      <UniqueIdentifier>{f076a2f8-a555-4608-94bf-23cc2b983bab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GamePlay">
+      <UniqueIdentifier>{99d67a42-8e63-4e18-8383-4abc058dd984}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GameMode.cpp">
+      <Filter>Source Files\GameMode</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files\Gloabals</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files\Gloabals</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderObject.cpp">
+      <Filter>Source Files\Gloabals</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePlay.cpp">
+      <Filter>Source Files\GameMode</Filter>
+    </ClCompile>
+    <ClCompile Include="PickUps.cpp">
+      <Filter>Source Files\GamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\GamePlay</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameMode.h">
+      <Filter>Header Files\GameMode</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files\Globals</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.h">
+      <Filter>Header Files\Globals</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderObject.h">
+      <Filter>Header Files\Globals</Filter>
+    </ClInclude>
+    <ClInclude Include="DEBUG.h">
+      <Filter>Header Files\Globals</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePlay.h">
+      <Filter>Header Files\GameMode</Filter>
+    </ClInclude>
+    <ClInclude Include="PickUps.h">
+      <Filter>Header Files\GamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\GamePlay</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ASSETS\IMAGES\SFML-LOGO.png">
+      <Filter>Resource Files\IMAGES</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="ASSETS\FONTS\ariblk.ttf">
+      <Filter>Resource Files\FONTS</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ProjectEpsilon.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
