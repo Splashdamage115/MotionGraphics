@@ -20,6 +20,10 @@ GamePlay::~GamePlay()
 /// </summary>
 void GamePlay::resetLevel()
 {
+	m_score.init();
+
+	if (m_pickups.size() != 0)
+		m_pickups.clear();
 	int cherryPos = (rand() % PICKUP_AMOUNT);
 
 	for (int i = 0; i < PICKUP_AMOUNT; i++)
@@ -32,6 +36,8 @@ void GamePlay::resetLevel()
 		m_pickups.push_back(newPickup);
 	}
 
+
+
 	m_backgroundTop = std::make_shared<sf::RectangleShape>();
 
 	m_backgroundTop->setFillColor(sf::Color::White);
@@ -40,6 +46,8 @@ void GamePlay::resetLevel()
 	m_backgroundTop->setPosition((SCREEN_WIDTH / 2.f ) - 60.f, SCREEN_HEIGHT / 2.f - 50);
 
 	RenderObject::getInstance().add(m_backgroundTop);
+
+
 
 	m_backgroundBottom = std::make_shared<sf::RectangleShape>();
 
@@ -50,8 +58,9 @@ void GamePlay::resetLevel()
 
 	RenderObject::getInstance().add(m_backgroundBottom);
 
-	m_player.init(m_backgroundTop->getGlobalBounds().left, m_backgroundTop->getGlobalBounds().left + m_backgroundTop->getGlobalBounds().width);
+	m_player.init(m_backgroundTop->getGlobalBounds().left, m_backgroundTop->getGlobalBounds().left + m_backgroundTop->getGlobalBounds().width, sf::Vector2f(m_backgroundTop->getGlobalBounds().left + 20, SCREEN_HEIGHT / 2.f));
 
+	m_enemy.init(sf::Vector2f(m_backgroundTop->getGlobalBounds().left + m_backgroundTop->getGlobalBounds().width - 20, SCREEN_HEIGHT / 2.f ));
 }
 
 /// <summary>
@@ -79,9 +88,19 @@ void GamePlay::handlePickups()
 	for (unsigned int i = 0; i < m_pickups.size(); i++)
 	{
 		if (m_pickups.at(i).getBounds().contains(playerPos))
+		{
 			m_pickups.at(i).itemPickedUp();
+			if (m_pickups.at(i).checkCherry())
+			{
+				m_score.increaseScore(CHERRY_SCORE);
+				m_enemy.enterHuntedMode();
+			}
+			else
+			{
+				m_score.increaseScore(BIT_SCORE);
+			}
+		}
 	}
-
 	bool reset = true;
 
 	for (unsigned int i = 0; i < m_pickups.size(); i++)
@@ -114,4 +133,30 @@ void GamePlay::update(sf::Time t_deltaTime)
 	m_player.update();
 	
 	handlePickups();
+
+	m_enemy.update();
+	m_enemy.followPlayer(m_player.getPosition().x);
+
+	if (m_player.checkCollision(m_enemy.getBounds()))
+	{
+		if (m_enemy.getHuntActive()) 
+		{
+			float respawnCoords{ 0 };
+			if (rand() % 2 == 0)
+			{
+				respawnCoords = m_backgroundTop->getGlobalBounds().left;
+			}
+			else
+			{
+				respawnCoords = m_backgroundTop->getGlobalBounds().left + m_backgroundTop->getGlobalBounds().width;
+			}
+			m_enemy.respawn(respawnCoords);
+
+			m_score.increaseScore(GHOST_SCORE);
+		}
+		else
+		{
+			resetLevel();
+		}
+	}
 }

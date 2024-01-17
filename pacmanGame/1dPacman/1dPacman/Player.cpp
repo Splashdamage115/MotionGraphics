@@ -9,8 +9,10 @@ Player::~Player()
 {
 }
 
-void Player::init(float t_left, float t_right)
+void Player::init(float t_left, float t_right, sf::Vector2f t_startPos)
 {
+	m_position = t_startPos;
+
 	m_body = std::make_shared<sf::RectangleShape>();
 	m_body->setSize(sf::Vector2f(30.f, 50.f));
 	m_body->setOrigin(m_body->getSize() / 2.f);
@@ -21,7 +23,7 @@ void Player::init(float t_left, float t_right)
 	m_leftSide = t_left;
 	m_rightSide = t_right;
 
-	m_moveSpeed = static_cast<float>(PLAYER_MOVE_SPEED);
+	m_moveSpeed = PLAYER_MOVE_SPEED;
 }
 
 void Player::update()
@@ -38,4 +40,13 @@ void Player::update()
 	}
 	m_position += sf::Vector2f(m_moveSpeed, 0);
 	m_body->move(sf::Vector2f(m_moveSpeed, 0));
+}
+
+bool Player::checkCollision(sf::FloatRect t_bound)
+{
+	if (t_bound.intersects(m_body->getGlobalBounds()))
+	{
+		return true;
+	}
+	return false;
 }

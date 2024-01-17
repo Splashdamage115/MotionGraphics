@@ -4,6 +4,8 @@
 #include"GameMode.h"
 #include"PickUps.h"
 #include"Player.h"
+#include"Enemy.h"
+#include"Score.h"
 #include<vector>
 
 class GamePlay : public GameMode
@@ -30,6 +32,9 @@ private:
 	std::shared_ptr<sf::RectangleShape> m_backgroundBottom;
 
 	Player m_player;
+	Enemy m_enemy;
+
+	Score m_score;
 
 	int m_ghostHuntTime{ 0 };
 };

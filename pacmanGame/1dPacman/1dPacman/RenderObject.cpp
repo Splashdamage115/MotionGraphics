@@ -1,4 +1,5 @@
 #include"RenderObject.h"
+
 RenderObject::RenderObject() :
 	m_window{ sf::VideoMode{ SCREEN_WIDTH, SCREEN_HEIGHT, 32U }, "1D Pacman" }
 {

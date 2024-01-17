@@ -14,12 +14,14 @@ public:
 	void itemPickedUp();
 	sf::FloatRect getBounds() { return m_body->getGlobalBounds(); }
 	bool getPickedUp() { return m_pickedUp; }
+	bool checkCherry();
 private:
 	PickupType m_type{ PickupType::None };
 
 	std::shared_ptr<sf::CircleShape> m_body;
 
 	bool m_pickedUp{ false };
+
 };
 
 #endif // !PICKUPS_H

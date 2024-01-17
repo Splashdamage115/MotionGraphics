@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameMode.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GamePlay.cpp" />
@@ -26,9 +27,11 @@
     <ClCompile Include="PickUps.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RenderObject.cpp" />
+    <ClCompile Include="Score.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DEBUG.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameMode.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GamePlay.h" />
@@ -36,6 +39,7 @@
     <ClInclude Include="PickUps.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RenderObject.h" />
+    <ClInclude Include="Score.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="ASSETS\IMAGES\SFML-LOGO.png">

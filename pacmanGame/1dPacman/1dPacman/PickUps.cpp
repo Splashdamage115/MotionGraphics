@@ -46,3 +46,10 @@ void PickUps::itemPickedUp()
 
 	m_pickedUp = true;
 }
+
+bool PickUps::checkCherry()
+{
+	if (m_type == PickupType::Cherry)
+		return true;
+	return false;
+}
