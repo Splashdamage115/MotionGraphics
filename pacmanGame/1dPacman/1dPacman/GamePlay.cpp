@@ -20,8 +20,6 @@ GamePlay::~GamePlay()
 /// </summary>
 void GamePlay::resetLevel()
 {
-	m_player.init();
-
 	int cherryPos = (rand() % PICKUP_AMOUNT);
 
 	for (int i = 0; i < PICKUP_AMOUNT; i++)
@@ -52,19 +50,8 @@ void GamePlay::resetLevel()
 
 	RenderObject::getInstance().add(m_backgroundBottom);
 
-	//m_sfmlLogoS = std::make_shared<sf::Sprite>();
+	m_player.init(m_backgroundTop->getGlobalBounds().left, m_backgroundTop->getGlobalBounds().left + m_backgroundTop->getGlobalBounds().width);
 
-	//if (!m_sfmlLogoT.loadFromFile("ASSETS\\IMAGES\\SFML-LOGO.png"))
-	//{
-	//	DEBUG_MSG("COULDNT FIND SFML LOGO");
-	//}
-	//else
-	//{
-	//	m_sfmlLogoS->setTexture(m_sfmlLogoT);
-	//	m_sfmlLogoS->setPosition(200.f, 200.f);
-
-	//	//RenderObject::getInstance().add(m_sfmlLogoS);
-	//}
 }
 
 /// <summary>
@@ -73,7 +60,7 @@ void GamePlay::resetLevel()
 /// <param name="t_event">passed from game loop to speed up code</param>
 void GamePlay::events(sf::Event& t_event)
 {
-	
+	processKeys(t_event);
 }
 
 /// !!!---Private function---!!!
@@ -83,7 +70,7 @@ void GamePlay::events(sf::Event& t_event)
 /// <param name="t_event">use this for the key press</param>
 void GamePlay::processKeys(sf::Event& t_event)
 {
-
+	m_player.invertMove();
 }
 
 /// <summary>
@@ -92,4 +79,18 @@ void GamePlay::processKeys(sf::Event& t_event)
 /// <param name="t_deltaTime">delta time passed from game</param>
 void GamePlay::update(sf::Time t_deltaTime)
 {
+	m_player.update();
+
+	sf::Vector2f playerPos = m_player.getPosition();
+	for (unsigned int i = 0; i < m_pickups.size(); i++)
+	{
+		if (m_pickups.at(i).getBounds().contains(playerPos))
+			m_pickups.at(i).itemPickedUp();
+	}
+
+	for (unsigned int i = 0; i < m_pickups.size(); i++)
+	{
+		if(m_pickups.at(i).)
+	}
+
 }

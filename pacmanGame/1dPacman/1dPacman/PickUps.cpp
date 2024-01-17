@@ -11,6 +11,8 @@ PickUps::~PickUps()
 
 void PickUps::init(PickupType t_newType, sf::Vector2f t_pos)
 {
+	m_pickedUp = false;
+
 	m_type = t_newType;
 
 	if (m_type == PickupType::None)
@@ -36,4 +38,11 @@ void PickUps::init(PickupType t_newType, sf::Vector2f t_pos)
 	m_body->setPosition(t_pos);
 
 	RenderObject::getInstance().add(m_body);
+}
+
+void PickUps::itemPickedUp()
+{
+	m_body->setPosition(-100.f, -100.f);
+
+	m_pickedUp = true;
 }
