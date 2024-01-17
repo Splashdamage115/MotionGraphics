@@ -19,6 +19,8 @@ public:
 private:
 	void processKeys(sf::Event& t_event)override;
 
+	void handlePickups();
+
 	//sf::Texture m_sfmlLogoT;
 	//std::shared_ptr< sf::Sprite > m_sfmlLogoS;
 
@@ -28,6 +30,8 @@ private:
 	std::shared_ptr<sf::RectangleShape> m_backgroundBottom;
 
 	Player m_player;
+
+	int m_ghostHuntTime{ 0 };
 };
 
 #endif // !GAME_PLAY_H

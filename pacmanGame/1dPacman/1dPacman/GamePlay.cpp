@@ -73,14 +73,8 @@ void GamePlay::processKeys(sf::Event& t_event)
 	m_player.invertMove();
 }
 
-/// <summary>
-/// all update functions will be in here
-/// </summary>
-/// <param name="t_deltaTime">delta time passed from game</param>
-void GamePlay::update(sf::Time t_deltaTime)
+void GamePlay::handlePickups()
 {
-	m_player.update();
-
 	sf::Vector2f playerPos = m_player.getPosition();
 	for (unsigned int i = 0; i < m_pickups.size(); i++)
 	{
@@ -88,9 +82,36 @@ void GamePlay::update(sf::Time t_deltaTime)
 			m_pickups.at(i).itemPickedUp();
 	}
 
+	bool reset = true;
+
 	for (unsigned int i = 0; i < m_pickups.size(); i++)
 	{
-		if(m_pickups.at(i).)
+		if (!m_pickups.at(i).getPickedUp())
+		{
+			reset = false;
+		}
 	}
+	if (reset)
+	{
+		int cherryPos = (rand() % PICKUP_AMOUNT);
+		for (unsigned int i = 0; i < m_pickups.size(); i++)
+		{
+			PickupType type = PickupType::Normal;
+			if (i == cherryPos)
+				type = PickupType::Cherry;
 
+			m_pickups.at(i).init(type, sf::Vector2f(((SCREEN_WIDTH / 2.f) - (100.f * (PICKUP_AMOUNT / 2.f))) + (100.f * i), SCREEN_HEIGHT / 2.f));
+		}
+	}
+}
+
+/// <summary>
+/// all update functions will be in here
+/// </summary>
+/// <param name="t_deltaTime">delta time passed from game</param>
+void GamePlay::update(sf::Time t_deltaTime)
+{
+	m_player.update();
+	
+	handlePickups();
 }
