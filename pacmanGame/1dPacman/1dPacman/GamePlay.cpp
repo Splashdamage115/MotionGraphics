@@ -20,6 +20,8 @@ GamePlay::~GamePlay()
 /// </summary>
 void GamePlay::resetLevel()
 {
+	m_canChangeDirection = true;
+
 	m_score.init();
 
 	if (m_pickups.size() != 0)
@@ -69,7 +71,18 @@ void GamePlay::resetLevel()
 /// <param name="t_event">passed from game loop to speed up code</param>
 void GamePlay::events(sf::Event& t_event)
 {
-	processKeys(t_event);
+	if (t_event.type == sf::Event::KeyPressed)
+	{
+		if (m_canChangeDirection)
+		{
+			m_player.invertMove();
+			m_canChangeDirection = false;
+		}
+	}
+	if (t_event.type == sf::Event::KeyReleased)
+	{
+		m_canChangeDirection = true;
+	}
 }
 
 /// !!!---Private function---!!!
@@ -79,7 +92,6 @@ void GamePlay::events(sf::Event& t_event)
 /// <param name="t_event">use this for the key press</param>
 void GamePlay::processKeys(sf::Event& t_event)
 {
-	m_player.invertMove();
 }
 
 void GamePlay::handlePickups()

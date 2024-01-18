@@ -37,6 +37,8 @@ private:
 	Score m_score;
 
 	int m_ghostHuntTime{ 0 };
+
+	bool m_canChangeDirection = true;
 };
 
 #endif // !GAME_PLAY_H
