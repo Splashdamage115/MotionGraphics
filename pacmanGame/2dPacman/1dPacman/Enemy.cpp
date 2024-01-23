@@ -163,7 +163,7 @@ void Enemy::checkDistanceToPlayer(sf::Vector2f t_playerPos)
 
 void Enemy::enterHuntedMode()
 {
-	m_moveSpeed -= GHOST_SPEED_DECREASE;
+	m_moveSpeed = GHOST_SPEED_DECREASE;
 	m_remainingHuntLength = GHOST_HUNT_LENGTH;
 	m_body->setFillColor(sf::Color::Red);
 }

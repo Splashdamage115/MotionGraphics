@@ -15,6 +15,10 @@ public:
 	void invertMove();
 	sf::Vector2f getPosition() { return m_position; }
 	bool checkCollision(sf::FloatRect t_bound);
+	void setPosition(sf::Vector2f t_pos) { m_position = t_pos; m_body->setPosition(t_pos); }
+
+	void setRight();
+	void setLeft();
 private:
 	sf::Vector2f m_position{ 0,0 };
 	float m_rightSide = 0;

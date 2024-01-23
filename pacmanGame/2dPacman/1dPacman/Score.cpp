@@ -17,7 +17,7 @@ void Score::init()
 		m_score->setFont(m_font);
 		m_score->setCharacterSize(10u);
 		m_score->setOrigin(m_score->getGlobalBounds().height / 2.f, m_score->getGlobalBounds().width / 2.f);
-		m_score->setPosition(sf::Vector2f(SCREEN_WIDTH / 2.f - 80, SCREEN_HEIGHT / 2.f - 40));
+		m_score->setPosition(sf::Vector2f(SCREEN_WIDTH / 2.f - 80, SCREEN_HEIGHT / 2.f + 300));
 		m_score->setFillColor(sf::Color::White);
 		m_score->setOutlineColor(sf::Color::Black);
 		m_score->setOutlineThickness(1);

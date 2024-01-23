@@ -21,15 +21,30 @@ public:
 private:
 	void processKeys(sf::Event& t_event)override;
 
-	void handlePickups();
+	void handlePickups(std::vector<PickUps>& t_pickup);
 
 	//sf::Texture m_sfmlLogoT;
 	//std::shared_ptr< sf::Sprite > m_sfmlLogoS;
 
-	std::vector<PickUps>m_pickups;
+	std::vector<PickUps>m_pickupsTop;
+	std::vector<PickUps>m_pickupsRight;
+	std::vector<PickUps>m_pickupsLeft;
+	std::vector<PickUps>m_pickupsBottom;
+
 
 	std::shared_ptr<sf::RectangleShape> m_backgroundTop;
+
+	std::shared_ptr<sf::RectangleShape> m_backgroundTop1;
+	std::shared_ptr<sf::RectangleShape> m_backgroundTop2;
 	std::shared_ptr<sf::RectangleShape> m_backgroundBottom;
+	std::shared_ptr<sf::RectangleShape> m_backgroundBottom2;
+	std::shared_ptr<sf::RectangleShape> m_backgroundLeft1;
+	std::shared_ptr<sf::RectangleShape> m_backgroundLeft2;
+	std::shared_ptr<sf::RectangleShape> m_backgroundRight1;
+	std::shared_ptr<sf::RectangleShape> m_backgroundRight2;
+	std::shared_ptr<sf::RectangleShape> m_backgroundMidLeft;
+	std::shared_ptr<sf::RectangleShape> m_backgroundMidRight;
+
 
 	Player m_player;
 	Enemy m_enemy;
@@ -39,6 +54,9 @@ private:
 	int m_ghostHuntTime{ 0 };
 
 	bool m_canChangeDirection = true;
+
+	std::shared_ptr< sf::RectangleShape> m_rightBox;
+	std::shared_ptr< sf::RectangleShape> m_leftBox;
 };
 
 #endif // !GAME_PLAY_H

@@ -138,3 +138,19 @@ bool Player::checkCollision(sf::FloatRect t_bound)
 	}
 	return false;
 }
+
+void Player::setRight()
+{
+	rightSide = true;
+	leftSide = false;
+	topSide = false;
+	bottomSide = false;
+}
+
+void Player::setLeft()
+{
+	rightSide = false;
+	leftSide = true;
+	topSide = true;
+	bottomSide = false;
+}

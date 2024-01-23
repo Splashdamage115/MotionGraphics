@@ -1,8 +1,12 @@
 #include"RenderObject.h"
 
 RenderObject::RenderObject() :
-	m_window{ sf::VideoMode{ SCREEN_WIDTH, SCREEN_HEIGHT, 32U }, "1D Pacman" }
+	m_window{ sf::VideoMode{ SCREEN_WIDTH, SCREEN_HEIGHT, 32U }, "1.5D Pacman" }
 {
+	sf::Image icon;
+	icon.loadFromFile(".\\ASSETS\\IMAGES\\R.png");
+
+	m_window.setIcon(150, 180, icon.getPixelsPtr());
 }
 
 void RenderObject::add(std::shared_ptr<sf::Drawable> t_new)
