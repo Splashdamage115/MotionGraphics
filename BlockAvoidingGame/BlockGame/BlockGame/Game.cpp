@@ -24,6 +24,12 @@ Game::Game() :
 {
 	srand(time(nullptr));
 
+	if (!m_logoTexture.loadFromFile("ASSETS\\IMAGES\\SFML-LOGO.png"))
+	{
+		// simple error message if previous call fails
+		std::cout << "problem loading logo" << std::endl;
+	}
+
 	setupFontAndText(); // load font 
 	setupSprite(); // load texture
 }
@@ -95,6 +101,10 @@ void Game::processKeys(sf::Event t_event)
 	{
 		m_exitGame = true;
 	}
+	if (sf::Keyboard::Space == t_event.key.code)
+	{
+		setupSprite();
+	}
 }
 
 /// <summary>
@@ -107,11 +117,43 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
+	player.move();
+	updateLevel();
+
+	for (int i = 0; i < WALL_AMOUNT; i++)
+		if (walls[i].getGlobalBounds().intersects(player.getBody()) &&	terrain[i] >= 1)
+		{
+			setupSprite();
+			break;
+		}
+}
+
+/// <summary>
+/// draw the frame and then switch buffers
+/// </summary>
+void Game::render()
+{
+	m_window.clear(sf::Color(97,97,99,255));
+
+	for (int i = 0; i < WALL_AMOUNT; i++)
+	{
+		m_window.draw(walls[i]);
+	}
+
+	player.render(m_window);
+
+	//m_window.draw(m_welcomeMessage);
+	//m_window.draw(m_logoSprite);
+	m_window.display();
+}
+
+void Game::updateLevel()
+{
 	for (int j = 0; j < WALL_AMOUNT; j += 10)
 	{
 		if (walls[j].getPosition().y > 1000)
 		{
-			/*int len = 0;
+			int len = 0;
 			int gap = 0;
 			if (j + 11 >= 110)
 			{
@@ -120,12 +162,26 @@ void Game::update(sf::Time t_deltaTime)
 				{
 					len = rand() % 9;
 					gap = rand() % 9;
-					for(int i = len; i < len+gap;i++)
-						if (terrain[i] == 0)
+
+					for (int i = 0; i < 11; i++)
+					{
+						if ((i % 10) < len)
 						{
-							impassable = false;
+							continue;
+						}
+						else if ((i % 10) < len + gap)
+						{
+							if (terrain[i] == 0)
+							{
+								impassable = false;
+								break;
+							}
+						}
+						else
+						{
 							break;
 						}
+					}
 				}
 			}
 			else
@@ -133,14 +189,28 @@ void Game::update(sf::Time t_deltaTime)
 				bool impassable = true;
 				while (impassable)
 				{
-					len = rand() % 10;
-					gap = rand() % 10;
-					for (int i = len + j; i < len + gap + j; i++)
-						if (terrain[i] == 0)
+					len = rand() % 9;
+					gap = rand() % 9;
+
+					for (int i = j + 10; i < j + 21; i++)
+					{
+						if ((i % 10) < len)
 						{
-							impassable = false;
+							continue;
+						}
+						else if ((i % 10) < len + gap)
+						{
+							if (terrain[i] == 0)
+							{
+								impassable = false;
+								break;
+							}
+						}
+						else
+						{
 							break;
 						}
+					}
 				}
 			}
 			for (int i = j; i < j + 10; i++)
@@ -158,47 +228,29 @@ void Game::update(sf::Time t_deltaTime)
 					terrain[i] = 1;
 				}
 			}
-			*/
+
 			for (int i = j; i < j + 10; i++)
 			{
-				
+
 
 				walls[i].move(0, -1100);
-				/*if (terrain[i] == 1)
+				if (terrain[i] == 1)
 				{
-					walls[i].setFillColor(sf::Color::White);
+					walls[i].setFillColor(sf::Color(135, 246, 255, 255));
 				}
 				else
 				{
 					walls[i].setFillColor(sf::Color::Transparent);
-				}*/
+				}
 			}
 
 			//currentCounterPos++;
 		}
 	}
-	
 	for (int i = 0; i < WALL_AMOUNT; i++)
 	{
 		walls[i].move(sf::Vector2f(0, 3.f));
 	}
-}
-
-/// <summary>
-/// draw the frame and then switch buffers
-/// </summary>
-void Game::render()
-{
-	m_window.clear();
-
-	for (int i = 0; i < WALL_AMOUNT; i++)
-	{
-		m_window.draw(walls[i]);
-	}
-
-	//m_window.draw(m_welcomeMessage);
-	//m_window.draw(m_logoSprite);
-	m_window.display();
 }
 
 /// <summary>
@@ -226,14 +278,15 @@ void Game::setupFontAndText()
 /// </summary>
 void Game::setupSprite()
 {
-	if (!m_logoTexture.loadFromFile("ASSETS\\IMAGES\\SFML-LOGO.png"))
-	{
-		// simple error message if previous call fails
-		std::cout << "problem loading logo" << std::endl;
-	}
+	player.init();
+
+	
 	m_logoSprite.setTexture(m_logoTexture);
 	m_logoSprite.setPosition(300.0f, 180.0f);
 	int yPosCounter = -1;
+
+	for (int i = 0; i < WALL_AMOUNT; i++)
+		terrain[i] = resetterrain[i];
 
 	for (int i = 0;i<WALL_AMOUNT; i++)
 	{
@@ -250,7 +303,7 @@ void Game::setupSprite()
 
 		if (terrain[i] == 1)
 		{
-			walls[i].setFillColor(sf::Color::White);
+			walls[i].setFillColor(sf::Color(135,246,255,255));
 		}
 		else
 		{
