@@ -1,7 +1,5 @@
 ﻿  Game.cpp
 C:\Users\c00283152\Desktop\MotionGraphics\BlockAvoidingGame\BlockGame\BlockGame\Game.cpp(25,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\c00283152\Desktop\MotionGraphics\BlockAvoidingGame\BlockGame\BlockGame\Game.cpp(296,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\c00283152\Desktop\MotionGraphics\BlockAvoidingGame\BlockGame\BlockGame\Game.cpp(297,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-  main.cpp
-  Generating Code...
+C:\Users\c00283152\Desktop\MotionGraphics\BlockAvoidingGame\BlockGame\BlockGame\Game.cpp(444,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\c00283152\Desktop\MotionGraphics\BlockAvoidingGame\BlockGame\BlockGame\Game.cpp(445,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
   BlockGame.vcxproj -> C:\Users\c00283152\Desktop\MotionGraphics\BlockAvoidingGame\BlockGame\Debug\BlockGame.exe

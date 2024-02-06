@@ -15,10 +15,10 @@
 class Bullet
 {
 public:
-
-private:
-	sf::RectangleShape m_body;
+	Bullet() { m_body.setFillColor(sf::Color(252, 255, 108)); m_body.setRadius(5.0f); m_body.setOrigin(5.0f, 5.0f); }
+	sf::CircleShape m_body;
 	bool active = false;
+	sf::Vector2f moveDirection{0.0f, 0.0f};
 };
 
 class Player
@@ -53,9 +53,42 @@ public:
 		}
 	}
 
-	void render(sf::RenderWindow& t_window) { t_window.draw(m_body); }
+	void render(sf::RenderWindow& t_window) {
+		for(int i = 0;i<BULLET_AMOUNT;i++)
+			if(m_bullets[i].active)
+				t_window.draw(m_bullets[i].m_body);
+
+		t_window.draw(m_body);
+	}
+
+	void update()
+	{
+		if (shotCooldown > 0)
+			shotCooldown--;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+		{
+			if (shotCooldown <= 0)
+			{
+				for (int i = 0; i < BULLET_AMOUNT; i++)
+					if (!m_bullets[i].active)
+					{
+						m_bullets[i].active = true;
+						m_bullets[i].m_body.setPosition(m_body.getPosition() + sf::Vector2f(15.f, 15.f));
+						shotCooldown = MAX_COOLDOWN;
+						break;
+					}
+			}
+		}
+
+		for (int i = 0; i < BULLET_AMOUNT; i++)
+			if (m_bullets[i].active)
+				m_bullets[i].m_body.move(0.0f, -5.f);
+	}
 
 	sf::FloatRect getBody() { return m_body.getGlobalBounds(); }
+
+	static const int BULLET_AMOUNT = 5;
+	Bullet m_bullets[BULLET_AMOUNT];
 
 private:
 	sf::RectangleShape m_body;
@@ -64,7 +97,6 @@ private:
 
 	int shotCooldown = 0;
 	const int MAX_COOLDOWN = 15;
-
 };
 
 // enemy color : 
@@ -111,7 +143,7 @@ private:
 	int resetterrain[WALL_AMOUNT] = {
 		1,1,1,1,1,0,1,1,1,1,
 		1,1,1,1,0,0,0,1,1,1,
-		1,1,1,0,0,0,0,0,1,1,
+		1,1,1,0,0,5,0,0,1,1,
 		1,1,0,0,0,0,0,0,1,1,
 		1,0,0,0,0,0,0,0,0,1,
 		1,0,0,0,0,0,0,0,0,1,
@@ -125,6 +157,11 @@ private:
 	int currentCounterPos = 0;
 
 	Player player;
+
+	Bullet wallBullets[5];
+	int fireCooldown = 30;
+
+	int score = 0;
 };
 
 #endif // !GAME_HPP

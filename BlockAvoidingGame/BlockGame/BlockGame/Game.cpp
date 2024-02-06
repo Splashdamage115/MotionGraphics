@@ -103,7 +103,7 @@ void Game::processKeys(sf::Event t_event)
 	}
 	if (sf::Keyboard::Space == t_event.key.code)
 	{
-		setupSprite();
+		// shoot weapon here
 	}
 }
 
@@ -113,19 +113,119 @@ void Game::processKeys(sf::Event t_event)
 /// <param name="t_deltaTime">time interval per frame</param>
 void Game::update(sf::Time t_deltaTime)
 {
+	if (fireCooldown > 0)
+		fireCooldown--;
+	else
+	{
+		for (int i = 0; i < WALL_AMOUNT; i++)
+		{
+			if (terrain[i] == 2 || terrain[i] == 3)
+			{
+				for (Bullet& b : wallBullets)
+				{
+					if (!b.active)
+					{
+						b.active = true;
+						b.m_body.setPosition(walls[i].getPosition() + sf::Vector2f(50.f, 50.f));
+						if (terrain[i] == 2)
+							b.moveDirection = sf::Vector2f(4.0f, 3.0f);
+						else if(terrain[i] == 3)
+							b.moveDirection = sf::Vector2f(-4.0f, 3.0f);
+						fireCooldown = 30;
+						break;
+					}
+				}
+				continue;
+			}
+					
+		}
+	}
+	for (Bullet& b : wallBullets)
+	{
+		if (b.active)
+		{
+			b.m_body.move(b.moveDirection);
+		}
+	}
+
 	if (m_exitGame)
 	{
 		m_window.close();
 	}
 	player.move();
+	player.update();
 	updateLevel();
 
 	for (int i = 0; i < WALL_AMOUNT; i++)
-		if (walls[i].getGlobalBounds().intersects(player.getBody()) &&	terrain[i] >= 1)
+	{
+		if (walls[i].getGlobalBounds().intersects(player.getBody()) && (terrain[i] >= 1))
 		{
-			setupSprite();
+			if(terrain[i] == 1 || terrain[i] == 2 || terrain[i] == 3)
+				setupSprite();
+			else if (terrain[i] == 5)
+			{
+				for (int j = 0; j < WALL_AMOUNT; j++)
+				{
+					terrain[j] = 0;
+					walls[j].setFillColor(sf::Color::Transparent);
+				}
+			}
+			else if (terrain[i] == 4)
+			{
+				terrain[i] = 0;
+				walls[i].setFillColor(sf::Color::Transparent);
+				score += 100;
+			}
 			break;
 		}
+	}
+
+	for (int i = 0; i < WALL_AMOUNT; i++)
+	{
+		for (Bullet& b : wallBullets)
+		{
+			if (!b.active)
+				continue;
+			if (terrain[i] == 2 || terrain[i] == 3 || terrain[i] == 0)
+				continue;
+			if (walls[i].getGlobalBounds().intersects(b.m_body.getGlobalBounds())
+				|| b.m_body.getPosition().x < 50.f || b.m_body.getPosition().x > 1050.f)
+			{
+				b.active = false;
+				b.m_body.setPosition(0.0f, -100.0f);
+			}
+			if (b.m_body.getGlobalBounds().intersects(player.getBody()))
+				setupSprite();
+		}
+
+		for (int w = 0; w < 5; w++)
+		{
+			if (!player.m_bullets[w].active)
+				continue;
+			if (walls[i].getGlobalBounds().intersects(player.m_bullets[w].m_body.getGlobalBounds()) && terrain[i] >= 1)
+			{
+				if (terrain[i] == 2 || terrain[i] == 3 || terrain[i] == 4)
+				{
+					terrain[i] = 0;
+					walls[i].setFillColor(sf::Color::Transparent);
+				if (terrain[i] == 4)
+					score += 100;
+				}
+				
+				else if (terrain[i] == 5)
+				{
+					for (int j = 0; j < WALL_AMOUNT; j++)
+					{
+						terrain[j] = 0;
+						walls[j].setFillColor(sf::Color::Transparent);
+					}
+					break;
+				}
+				player.m_bullets[w].active = false;
+				player.m_bullets[w].m_body.setPosition(0.0f,-100.0f);
+			}
+		}
+	}
 }
 
 /// <summary>
@@ -135,12 +235,16 @@ void Game::render()
 {
 	m_window.clear(sf::Color(97,97,99,255));
 
+	player.render(m_window);
+
+	for (Bullet& b : wallBullets)
+		m_window.draw(b.m_body);
+
 	for (int i = 0; i < WALL_AMOUNT; i++)
 	{
 		m_window.draw(walls[i]);
 	}
-
-	player.render(m_window);
+	
 
 	//m_window.draw(m_welcomeMessage);
 	//m_window.draw(m_logoSprite);
@@ -213,6 +317,7 @@ void Game::updateLevel()
 					}
 				}
 			}
+
 			for (int i = j; i < j + 10; i++)
 			{
 				if (i < len + j)
@@ -229,6 +334,32 @@ void Game::updateLevel()
 				}
 			}
 
+			if (gap > 1)
+			{
+				int spawnEnemy = rand() % 4;
+				int spawnPowerUp = rand() % 15;
+				if (spawnEnemy == 0)
+				{
+					if (rand() % 2 == 0)
+					{
+						terrain[len + j] = 2; // shoot right
+					}
+					else
+					{
+						terrain[len + j + gap - 1] = 3; // shoot left
+					}
+				}
+				else
+				{
+					if (spawnPowerUp == 0)
+					{
+						spawnPowerUp = rand() % 2;
+						int spawnPos = rand() % gap;
+						terrain[len + spawnPos + j] = spawnPowerUp + 4;
+					}
+				}
+			}
+
 			for (int i = j; i < j + 10; i++)
 			{
 
@@ -238,9 +369,21 @@ void Game::updateLevel()
 				{
 					walls[i].setFillColor(sf::Color(135, 246, 255, 255));
 				}
-				else
+				else if (terrain[i] == 0)
 				{
 					walls[i].setFillColor(sf::Color::Transparent);
+				}
+				else if (terrain[i] == 2 || terrain[i] == 3)
+				{
+					walls[i].setFillColor(sf::Color(240, 93, 35, 255));
+				}
+				else if (terrain[i] == 4)
+				{
+					walls[i].setFillColor(sf::Color::Green);
+				}
+				else if (terrain[i] == 5)
+				{
+					walls[i].setFillColor(sf::Color::Magenta);
 				}
 			}
 
@@ -279,7 +422,14 @@ void Game::setupFontAndText()
 void Game::setupSprite()
 {
 	player.init();
+	for (int w = 0; w < player.BULLET_AMOUNT; w++)
+	{
+		player.m_bullets[w].active = false;
+		player.m_bullets[w].m_body.setPosition(0.0f, -100.0f);
+	}
 
+	for (Bullet& b : wallBullets)
+		b.active = false;
 	
 	m_logoSprite.setTexture(m_logoTexture);
 	m_logoSprite.setPosition(300.0f, 180.0f);
@@ -303,11 +453,23 @@ void Game::setupSprite()
 
 		if (terrain[i] == 1)
 		{
-			walls[i].setFillColor(sf::Color(135,246,255,255));
+			walls[i].setFillColor(sf::Color(135, 246, 255, 255));
 		}
-		else
+		else if (terrain[i] == 0)
 		{
 			walls[i].setFillColor(sf::Color::Transparent);
+		}
+		else if (terrain[i] == 2 || terrain[i] == 3)
+		{
+			walls[i].setFillColor(sf::Color(240, 93, 35, 255));
+		}
+		else if (terrain[i] == 4)
+		{
+			walls[i].setFillColor(sf::Color::Green);
+		}
+		else if (terrain[i] == 5)
+		{
+			walls[i].setFillColor(sf::Color::Magenta);
 		}
 	}
 }
