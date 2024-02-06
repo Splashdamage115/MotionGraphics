@@ -130,6 +130,7 @@ private:
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
 	sf::Text m_welcomeMessage; // text used for message on screen
+	sf::Text bigText;
 	sf::Texture m_logoTexture; // texture used for sfml logo
 	sf::Sprite m_logoSprite; // sprite used for sfml logo
 	bool m_exitGame; // control exiting game
@@ -162,6 +163,7 @@ private:
 	int fireCooldown = 30;
 
 	int score = 0;
+	bool dead = false;
 };
 
 #endif // !GAME_HPP

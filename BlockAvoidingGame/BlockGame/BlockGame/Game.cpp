@@ -22,6 +22,8 @@ Game::Game() :
 	m_window{ sf::VideoMode{ 1000U, 1000U, 32U }, "BlockGame" },
 	m_exitGame{false} //when true game will exit
 {
+	m_window.setKeyRepeatEnabled(false);
+
 	srand(time(nullptr));
 
 	if (!m_logoTexture.loadFromFile("ASSETS\\IMAGES\\SFML-LOGO.png"))
@@ -69,6 +71,7 @@ void Game::run()
 		render(); // as many as possible
 	}
 }
+
 /// <summary>
 /// handle user and system events/ input
 /// get key presses/ mouse moves etc. from OS
@@ -85,6 +88,8 @@ void Game::processEvents()
 		}
 		if (sf::Event::KeyPressed == newEvent.type) //user pressed a key
 		{
+			if (dead)
+				setupSprite();
 			processKeys(newEvent);
 		}
 	}
@@ -113,6 +118,33 @@ void Game::processKeys(sf::Event t_event)
 /// <param name="t_deltaTime">time interval per frame</param>
 void Game::update(sf::Time t_deltaTime)
 {
+	if (score >= 1000)
+	{
+		for (int i = 0; i < WALL_AMOUNT; i++)
+		{
+			terrain[i] = 0;
+			walls[i].setFillColor(sf::Color::Transparent);
+		}
+		bigText.setFillColor(sf::Color::Green);
+		bigText.setString("YOU WIN!");
+	}
+	else if (score < 5)
+	{
+		bigText.setFillColor(sf::Color::Black);
+		bigText.setString("Reach 1000 score to Win!");
+	}
+	else if (dead)
+	{
+		bigText.setFillColor(sf::Color::Red);
+		bigText.setString("			You Died\n press any key to continue");
+		for (int i = 0; i < WALL_AMOUNT; i++)
+		{
+			terrain[i] = 0;
+			walls[i].setFillColor(sf::Color::Transparent);
+		}
+		
+	}
+	
 	if (fireCooldown > 0)
 		fireCooldown--;
 	else
@@ -128,9 +160,9 @@ void Game::update(sf::Time t_deltaTime)
 						b.active = true;
 						b.m_body.setPosition(walls[i].getPosition() + sf::Vector2f(50.f, 50.f));
 						if (terrain[i] == 2)
-							b.moveDirection = sf::Vector2f(4.0f, 3.0f);
-						else if(terrain[i] == 3)
-							b.moveDirection = sf::Vector2f(-4.0f, 3.0f);
+							b.moveDirection = sf::Vector2f(3.6f, 3.0f);
+						else if (terrain[i] == 3)
+							b.moveDirection = sf::Vector2f(-3.6f, 3.0f);
 						fireCooldown = 30;
 						break;
 					}
@@ -161,7 +193,7 @@ void Game::update(sf::Time t_deltaTime)
 		if (walls[i].getGlobalBounds().intersects(player.getBody()) && (terrain[i] >= 1))
 		{
 			if(terrain[i] == 1 || terrain[i] == 2 || terrain[i] == 3)
-				setupSprite();
+				dead = true;
 			else if (terrain[i] == 5)
 			{
 				for (int j = 0; j < WALL_AMOUNT; j++)
@@ -195,7 +227,7 @@ void Game::update(sf::Time t_deltaTime)
 				b.m_body.setPosition(0.0f, -100.0f);
 			}
 			if (b.m_body.getGlobalBounds().intersects(player.getBody()))
-				setupSprite();
+				dead = true;
 		}
 
 		for (int w = 0; w < 5; w++)
@@ -206,10 +238,10 @@ void Game::update(sf::Time t_deltaTime)
 			{
 				if (terrain[i] == 2 || terrain[i] == 3 || terrain[i] == 4)
 				{
+					if (terrain[i] == 4)
+						score += 50;
 					terrain[i] = 0;
 					walls[i].setFillColor(sf::Color::Transparent);
-				if (terrain[i] == 4)
-					score += 100;
 				}
 				
 				else if (terrain[i] == 5)
@@ -226,6 +258,8 @@ void Game::update(sf::Time t_deltaTime)
 			}
 		}
 	}
+	m_welcomeMessage.setString("Score: " + std::to_string(score));
+
 }
 
 /// <summary>
@@ -238,6 +272,7 @@ void Game::render()
 	player.render(m_window);
 
 	for (Bullet& b : wallBullets)
+		if(b.active)
 		m_window.draw(b.m_body);
 
 	for (int i = 0; i < WALL_AMOUNT; i++)
@@ -245,6 +280,10 @@ void Game::render()
 		m_window.draw(walls[i]);
 	}
 	
+	m_window.draw(m_welcomeMessage);
+
+	if(score < 5 || score > 1000 || dead)
+		m_window.draw(bigText);
 
 	//m_window.draw(m_welcomeMessage);
 	//m_window.draw(m_logoSprite);
@@ -257,6 +296,7 @@ void Game::updateLevel()
 	{
 		if (walls[j].getPosition().y > 1000)
 		{
+			score++;
 			int len = 0;
 			int gap = 0;
 			if (j + 11 >= 110)
@@ -406,14 +446,23 @@ void Game::setupFontAndText()
 		std::cout << "problem loading arial black font" << std::endl;
 	}
 	m_welcomeMessage.setFont(m_ArialBlackfont);
-	m_welcomeMessage.setString("SFML Game");
-	m_welcomeMessage.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
-	m_welcomeMessage.setPosition(40.0f, 40.0f);
-	m_welcomeMessage.setCharacterSize(80U);
-	m_welcomeMessage.setOutlineColor(sf::Color::Red);
+	m_welcomeMessage.setString("Score: " + std::to_string(score));
+	//m_welcomeMessage.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
+	m_welcomeMessage.setPosition(900.0f, 40.0f);
+	m_welcomeMessage.setCharacterSize(14U);
+	m_welcomeMessage.setOutlineColor(sf::Color::White);
 	m_welcomeMessage.setFillColor(sf::Color::Black);
-	m_welcomeMessage.setOutlineThickness(3.0f);
+	m_welcomeMessage.setOutlineThickness(1.0f);
 
+	bigText.setFont(m_ArialBlackfont);
+	bigText.setString("Reach 1000 score to Win!");
+	//bigText.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
+	bigText.setPosition(500.f, 500.0f);
+	bigText.setCharacterSize(40U);
+	bigText.setOutlineColor(sf::Color::White);
+	bigText.setFillColor(sf::Color::Black);
+	bigText.setOutlineThickness(1.0f);
+	bigText.setOrigin(bigText.getGlobalBounds().width / 2.f, bigText.getGlobalBounds().height / 2.f);
 }
 
 /// <summary>
@@ -421,6 +470,9 @@ void Game::setupFontAndText()
 /// </summary>
 void Game::setupSprite()
 {
+	score = 0;
+	dead = false;
+
 	player.init();
 	for (int w = 0; w < player.BULLET_AMOUNT; w++)
 	{
