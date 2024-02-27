@@ -36,6 +36,7 @@ public:
 	float frameTimer{ 0.f };
 	int currentFrame{ 0 };
 	int frameHeight{ 0 };
+	bool playNextLevel{ false };
 
 	sf::RectangleShape playerShape;
 
@@ -43,7 +44,7 @@ public:
 
 	static const int numRows = 20;
 	static const int numCols = 45;
-	int levelData[numRows][numCols] = {
+	int levelData[2][numRows][numCols] = { {
 	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
 	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
 	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 2 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
@@ -63,7 +64,30 @@ public:
 	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 5 , 0 , 5 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 3 },
 	{ 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 1 , 1 },
 	{ 0 , 0 , 0 , 0 , 0 , 1 , 0 , 2 , 0 , 2 , 0 , 0 , 0 , 0 , 5 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 5 , 0 , 0 , 0 },
-	{ 1 , 1 , 1 , 1 , 1 , 1 , 1 , 2 , 1 , 1 , 1 , 0 , 0 , 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 1 , 1 , 0 , 0 , 0 }, };
+	{ 1 , 1 , 1 , 1 , 1 , 1 , 1 , 2 , 1 , 1 , 1 , 0 , 0 , 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 1 , 1 , 0 , 0 , 0 } },
+	
+		{
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 4 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 5 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 4 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 1 , 1 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 5 , 1 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 2 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 1 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 5 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 2 , 0 , 0 , 0 , 0 , 0 , 0 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 5 , 0 , 5 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 3 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 },
+	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 2 , 0 , 2 , 0 , 0 , 5 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 5 , 0 , 0 , 0 , 0 },
+	{ 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 1 , 1 , 0 , 0 , 0 },
+	} };
 
 	sf::RectangleShape level[numRows][numCols];
 
@@ -100,62 +124,123 @@ public:
 		m_playerS.setPosition(160, 500);
 		m_playerS.setPosition(playerShape.getPosition());
 
-		for (int col = 0; col < numCols; col++)
-		{
-			for (int row = 0; row < numRows; row++)
+		if (!playNextLevel) {
+			for (int col = 0; col < numCols; col++)
 			{
-
-				if (levelData[row][col] == 1)
+				for (int row = 0; row < numRows; row++)
 				{
 
-					level[row][col].setSize(sf::Vector2f(70, 30));
-					level[row][col].setPosition(col * 70, row * 30);
-					level[row][col].setFillColor(sf::Color::Red);
+					if (levelData[0][row][col] == 1)
+					{
+
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+						level[row][col].setFillColor(sf::Color::Red);
+					}
+					if (levelData[0][row][col] == 0)
+					{
+
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+						level[row][col].setFillColor(sf::Color::Black);
+					}
+					if (levelData[0][row][col] == 2)
+					{
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+
+						level[row][col].setFillColor(sf::Color::Blue);
+
+					}
+					if (levelData[0][row][col] == 3)
+					{
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+
+						level[row][col].setFillColor(sf::Color::Green);
+					}
+
+					if (levelData[0][row][col] == 4)
+					{
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+
+						level[row][col].setFillColor(sf::Color::Magenta);
+
+					}
+					if (levelData[0][row][col] == 5)
+					{
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+
+						level[row][col].setFillColor(sf::Color::Yellow);
+
+					}
+
 				}
-				if (levelData[row][col] == 0)
-				{
-
-					level[row][col].setSize(sf::Vector2f(70, 30));
-					level[row][col].setPosition(col * 70, row * 30);
-					level[row][col].setFillColor(sf::Color::Black);
-				}
-				if (levelData[row][col] == 2)
-				{
-					level[row][col].setSize(sf::Vector2f(70, 30));
-					level[row][col].setPosition(col * 70, row * 30);
-
-					level[row][col].setFillColor(sf::Color::Blue);
-
-				}
-				if (levelData[row][col] == 3)
-				{
-					level[row][col].setSize(sf::Vector2f(70, 30));
-					level[row][col].setPosition(col * 70, row * 30);
-
-					level[row][col].setFillColor(sf::Color::Green);
-				}
-				
-				if (levelData[row][col] == 4)
-				{
-					level[row][col].setSize(sf::Vector2f(70, 30));
-					level[row][col].setPosition(col * 70, row * 30);
-
-					level[row][col].setFillColor(sf::Color::Magenta);
-
-				}
-				if (levelData[row][col] == 5)
-				{
-					level[row][col].setSize(sf::Vector2f(70, 30));
-					level[row][col].setPosition(col * 70, row * 30);
-
-					level[row][col].setFillColor(sf::Color::Yellow);
-
-				}
-
+				std::cout << std::endl;
 			}
-			std::cout << std::endl;
+
 		}
 
+		else
+		{
+			for (int col = 0; col < numCols; col++)
+			{
+				for (int row = 0; row < numRows; row++)
+				{
+
+					if (levelData[1][row][col] == 1)
+					{
+
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+						level[row][col].setFillColor(sf::Color::Red);
+					}
+					if (levelData[1][row][col] == 0)
+					{
+
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+						level[row][col].setFillColor(sf::Color::Black);
+					}
+					if (levelData[1][row][col] == 2)
+					{
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+
+						level[row][col].setFillColor(sf::Color::Blue);
+
+					}
+					if (levelData[1][row][col] == 3)
+					{
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+
+						level[row][col].setFillColor(sf::Color::Green);
+					}
+
+					if (levelData[1][row][col] == 4)
+					{
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+
+						level[row][col].setFillColor(sf::Color::Magenta);
+
+					}
+					if (levelData[1][row][col] == 5)
+					{
+						level[row][col].setSize(sf::Vector2f(70, 30));
+						level[row][col].setPosition(col * 70, row * 30);
+
+						level[row][col].setFillColor(sf::Color::Yellow);
+
+					}
+
+				}
+				std::cout << std::endl;
+			}
+		}
 	}
 	void run()
 	{
@@ -232,75 +317,156 @@ public:
 				m_playerS.setPosition(playerShape.getPosition());
 
 				gravity = 0.6;
-
-				for (int row = 0; row < numRows; row++)
+				if (!playNextLevel)
 				{
-					for (int col = 0; col < numCols; col++)
+					for (int row = 0; row < numRows; row++)
 					{
-						if (velocityY >= 0)
+						for (int col = 0; col < numCols; col++)
 						{
-							if (levelData[row][col] == 1)
+							if (velocityY >= 0)
 							{
-
-								if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+								if (levelData[0][row][col] == 1)
 								{
-									if (playerShape.getPosition().y < level[row][col].getPosition().y)
+
+									if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
 									{
-										frameHeight = 0;
-										gravity = 0;
-										velocityY = 0;
-										playerShape.setPosition(playerShape.getPosition().x, level[row][col].getPosition().y);
-										playerShape.move(0, -playerShape.getGlobalBounds().height);
-										break;
+										if (playerShape.getPosition().y < level[row][col].getPosition().y)
+										{
+											frameHeight = 0;
+											gravity = 0;
+											velocityY = 0;
+											playerShape.setPosition(playerShape.getPosition().x, level[row][col].getPosition().y);
+											playerShape.move(0, -playerShape.getGlobalBounds().height);
+											break;
+										}
+										else
+										{
+											init();
+										}
 									}
-									else
+
+
+								}
+
+							}
+							if (velocityY < 0)
+							{
+								if (levelData[0][row][col] == 1)
+								{
+									if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
 									{
 										init();
 									}
+
 								}
 
-
 							}
-
-						}
-						if (velocityY < 0)
-						{
-							if (levelData[row][col] == 1)
+							if (levelData[0][row][col] == 2)
 							{
 								if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
 								{
 									init();
 								}
+							}
+							if (levelData[0][row][col] == 3)
+							{
+								if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+								{
+									if (playNextLevel)
+										winText.setFillColor(sf::Color::White);
+									playNextLevel = true;
+								}
+							}
+							if (levelData[0][row][col] == 4)
+							{
+								if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+								{
+									slowMoTimeLeft = 360;
+								}
+							}
+							if (levelData[0][row][col] == 5)
+							{
+								if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+								{
+									ExtraJumpTimeLeft = 100;
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					for (int row = 0; row < numRows; row++)
+					{
+						for (int col = 0; col < numCols; col++)
+						{
+							if (velocityY >= 0)
+							{
+								if (levelData[1][row][col] == 1)
+								{
+
+									if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+									{
+										if (playerShape.getPosition().y < level[row][col].getPosition().y)
+										{
+											frameHeight = 0;
+											gravity = 0;
+											velocityY = 0;
+											playerShape.setPosition(playerShape.getPosition().x, level[row][col].getPosition().y);
+											playerShape.move(0, -playerShape.getGlobalBounds().height);
+											break;
+										}
+										else
+										{
+											init();
+										}
+									}
+
+
+								}
 
 							}
+							if (velocityY < 0)
+							{
+								if (levelData[1][row][col] == 1)
+								{
+									if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+									{
+										init();
+									}
 
-						}
-						if (levelData[row][col] == 2)
-						{
-							if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
-							{
-								init();
+								}
+
 							}
-						}
-						if (levelData[row][col] == 3)
-						{
-							if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+							if (levelData[1][row][col] == 2)
 							{
-								winText.setFillColor(sf::Color::White);
+								if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+								{
+									init();
+								}
 							}
-						}
-						if (levelData[row][col] == 4)
-						{
-							if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+							if (levelData[1][row][col] == 3)
 							{
-								slowMoTimeLeft = 360;
+								if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+								{
+									if (playNextLevel)
+										winText.setFillColor(sf::Color::White);
+									playNextLevel = true;
+								}
 							}
-						}
-						if (levelData[row][col] == 5)
-						{
-							if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+							if (levelData[1][row][col] == 4)
 							{
-								ExtraJumpTimeLeft = 100;
+								if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+								{
+									slowMoTimeLeft = 360;
+								}
+							}
+							if (levelData[1][row][col] == 5)
+							{
+								if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
+								{
+									ExtraJumpTimeLeft = 100;
+								}
 							}
 						}
 					}
