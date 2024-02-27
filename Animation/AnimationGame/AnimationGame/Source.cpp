@@ -84,8 +84,9 @@ public:
 			std::cout << "DIDNT LOAD Player\n";
 		}
 		m_playerS.setTexture(m_playerT);
-		m_playerS.setTextureRect(sf::IntRect(1,1,186,171));
-		m_playerS.setScale(0.125f, 0.125f);
+		m_playerS.setTextureRect(sf::IntRect(0,0,375,666));
+		m_playerS.setScale(0.08f, 0.08f);
+		m_playerS.setOrigin(115.f, 235.f);
 	}
 	void init()
 	{
@@ -196,7 +197,7 @@ public:
 					currentFrame++;
 					if (currentFrame > 7)
 						currentFrame = 0;
-					m_playerS.setTextureRect(sf::IntRect((171 * currentFrame), 1 + (173 * currentFrame), 173, 171));
+					m_playerS.setTextureRect(sf::IntRect((375 * currentFrame), frameHeight * 666, 375, 666));
 
 				}
 
