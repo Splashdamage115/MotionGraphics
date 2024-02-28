@@ -17,6 +17,8 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+
 #include <time.h> 
 
 class Game
@@ -44,6 +46,8 @@ public:
 
 	static const int numRows = 20;
 	static const int numCols = 45;
+	static const int tileNum = numRows * numCols;
+
 	int levelData[2][numRows][numCols] = { {
 	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
 	{ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 },
@@ -89,10 +93,27 @@ public:
 	{ 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 1 , 1 , 0 , 0 , 0 },
 	} };
 
+	sf::Sprite bodies[numRows][numCols];
+
+	sf::Texture tile; sf::Texture jump; sf::Texture timeTile; sf::Texture death; sf::Texture win;
+
 	sf::RectangleShape level[numRows][numCols];
+
+	sf::SoundBuffer jumpSoundBuffer;
+	sf::SoundBuffer deathSoundBuffer;
+
+	sf::Sound m_sounddeath;
+	sf::Sound m_soundJump;
 
 	Game()
 	{
+		jumpSoundBuffer.loadFromFile("Jump.wav");
+		deathSoundBuffer.loadFromFile("Pain.wav");
+
+		m_sounddeath.setBuffer(deathSoundBuffer);
+		m_soundJump.setBuffer(jumpSoundBuffer);
+
+
 		window.create(sf::VideoMode(800, 600), "Endless Runner Game");
 		if(!Font.loadFromFile("PixelSans.ttf"))
 		{
@@ -111,9 +132,19 @@ public:
 		m_playerS.setTextureRect(sf::IntRect(0,0,375,666));
 		m_playerS.setScale(0.08f, 0.08f);
 		m_playerS.setOrigin(115.f, 235.f);
+
+		tile.loadFromFile("tileNormal.png");
+		jump.loadFromFile("jumpTile.png");
+		timeTile.loadFromFile("time.png");
+		death.loadFromFile("death.png");
+		win.loadFromFile("win.png");
+		
+		
 	}
 	void init()
 	{
+
+
 		slowMoTimeLeft = 0;
 		ExtraJumpTimeLeft = 0;
 		winText.setFillColor(sf::Color::Transparent);
@@ -125,6 +156,36 @@ public:
 		m_playerS.setPosition(playerShape.getPosition());
 
 		if (!playNextLevel) {
+			for (int col = 0; col < numCols; col++)
+			{
+				for (int row = 0; row < numRows; row++)
+				{
+					if (levelData[0][row][col] == 0)
+					{
+						continue;
+					}
+					else if (levelData[0][row][col] == 1)
+					{
+						bodies[row][col].setTexture(tile);
+					}
+					else if (levelData[0][row][col] == 2)
+					{
+						bodies[row][col].setTexture(death);
+					}
+					else if (levelData[0][row][col] == 3)
+					{
+						bodies[row][col].setTexture(win);
+					}
+					else if (levelData[0][row][col] == 4)
+					{
+						bodies[row][col].setTexture(timeTile);
+					}
+					else if (levelData[0][row][col] == 5)
+					{
+						bodies[row][col].setTexture(jump);
+					}
+				}
+			}
 			for (int col = 0; col < numCols; col++)
 			{
 				for (int row = 0; row < numRows; row++)
@@ -176,7 +237,6 @@ public:
 						level[row][col].setFillColor(sf::Color::Yellow);
 
 					}
-
 				}
 				std::cout << std::endl;
 			}
@@ -185,6 +245,36 @@ public:
 
 		else
 		{
+			for (int col = 0; col < numCols; col++)
+			{
+				for (int row = 0; row < numRows; row++)
+				{
+					if (levelData[1][row][col] == 0)
+					{
+						continue;
+					}
+					else if (levelData[1][row][col] == 1)
+					{
+						bodies[row][col].setTexture(tile);
+					}
+					else if (levelData[1][row][col] == 2)
+					{
+						bodies[row][col].setTexture(death);
+					}
+					else if (levelData[1][row][col] == 3)
+					{
+						bodies[row][col].setTexture(win);
+					}
+					else if (levelData[1][row][col] == 4)
+					{
+						bodies[row][col].setTexture(timeTile);
+					}
+					else if (levelData[1][row][col] == 5)
+					{
+						bodies[row][col].setTexture(jump);
+					}
+				}
+			}
 			for (int col = 0; col < numCols; col++)
 			{
 				for (int row = 0; row < numRows; row++)
@@ -291,9 +381,17 @@ public:
 					for (int col = 0; col < numCols; col++)
 					{
 						if (slowMoTimeLeft <= 0)
+						{
 							level[row][col].move(-3.7, 0);
+							//bodies[row * col].move(- 3.7, 0);
+
+						}
 						else
+						{
 							level[row][col].move(-2.4, 0);
+							//bodies[row * col].move(-2.4, 0);
+
+						}
 					}
 
 				}
@@ -309,6 +407,8 @@ public:
 					}
 					else
 						velocityY = -11.8;
+					m_soundJump.play();
+
 				}
 
 				velocityY = velocityY + gravity;
@@ -342,6 +442,8 @@ public:
 										else
 										{
 											init();
+											m_sounddeath.play();
+
 										}
 									}
 
@@ -356,6 +458,8 @@ public:
 									if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
 									{
 										init();
+										m_sounddeath.play();
+
 									}
 
 								}
@@ -366,6 +470,8 @@ public:
 								if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
 								{
 									init();
+									m_sounddeath.play();
+
 								}
 							}
 							if (levelData[0][row][col] == 3)
@@ -419,6 +525,9 @@ public:
 										else
 										{
 											init();
+
+											m_sounddeath.play();
+
 										}
 									}
 
@@ -433,6 +542,8 @@ public:
 									if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
 									{
 										init();
+										m_sounddeath.play();
+
 									}
 
 								}
@@ -443,6 +554,8 @@ public:
 								if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
 								{
 									init();
+									m_sounddeath.play();
+
 								}
 							}
 							if (levelData[1][row][col] == 3)
@@ -477,6 +590,8 @@ public:
 				if (playerShape.getPosition().y > 600)
 				{
 					init();
+					m_sounddeath.play();
+
 				}
 
 				window.clear();
@@ -486,7 +601,8 @@ public:
 					for (int col = 0; col < numCols; col++)
 					{
 						window.draw(level[row][col]);
-
+						bodies[row][col].setPosition(level[row][col].getPosition());
+						window.draw(bodies[row][col]);
 					}
 				}
 				window.draw(playerShape);
