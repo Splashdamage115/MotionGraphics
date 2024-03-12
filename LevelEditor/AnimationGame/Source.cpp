@@ -60,7 +60,7 @@ public:
 		m_dispString.setFont(m_font);
 		m_dispString.setPosition(0.f, 0.f);
 		m_dispString.setCharacterSize(12u);
-		m_dispString.setString("Right Click clears tiles\nLeft click places tiles");
+		m_dispString.setString("Right Click - clears tiles\n\nLeft click -  places tiles\n\nA -              moves left\n\nD -              moves right");
 
 
 		m_leftMenu.setSize(sf::Vector2f(200.f, 600.f));
@@ -70,10 +70,10 @@ public:
 
 		for (int i = 0; i < BUTTON_AMOUNT; i++)
 		{
-			m_button[i].setSize(sf::Vector2f(70.f, 30.f));
-			m_button[i].setPosition(sf::Vector2f(30.f, 100.f + (i * 100.f)));
-			m_buttonOverlay[i].setSize(sf::Vector2f(70.f, 30.f));
-			m_buttonOverlay[i].setPosition(sf::Vector2f(30.f, 100.f + (i * 100.f)));
+			m_button[i].setSize(sf::Vector2f(100.f, 30.f));
+			m_button[i].setPosition(sf::Vector2f(50.f, 150.f + (i * 100.f)));
+			m_buttonOverlay[i].setSize(sf::Vector2f(100.f, 30.f));
+			m_buttonOverlay[i].setPosition(sf::Vector2f(50.f, 150.f + (i * 100.f)));
 
 			if(i == 0)
 				m_button[i].setFillColor(sf::Color::Red);
