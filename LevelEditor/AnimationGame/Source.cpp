@@ -21,7 +21,12 @@
 
 #include <time.h> 
 
-bool levelEditorActive = true;
+bool levelEditorActive = false;
+bool mainMenu = true;
+bool resetLevel = false;
+bool closeGame = false;
+
+bool textureMode = false;
 
 static const int numRows = 20;
 static const int numCols = 45;
@@ -47,6 +52,91 @@ int levelData[numRows][numCols] = {
 	{ 0 , 0 , 0 , 0 , 0 , 1 , 0 , 2 , 0 , 2 , 0 , 0 , 0 , 0 , 5 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 5 , 0 , 0 , 0 },
 	{ 1 , 1 , 1 , 1 , 1 , 1 , 1 , 2 , 1 , 1 , 1 , 0 , 0 , 1 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 , 1 , 1 , 0 , 0 , 0 } };
 
+class Menu
+{
+public:
+	void init()
+	{
+		if (!m_font.loadFromFile("PixelSans.ttf"))
+		{
+			std::cout << "DIDNT LOAD TEXT\n";
+		}
+		for (int i = 0; i < BUTTON_AMOUNT; i++)
+		{
+			m_buttons[i].setSize(sf::Vector2f(200.f, 100.f));
+			m_buttons[i].setPosition(sf::Vector2f(300.f, 100.f + (120.f * i)));
+			m_buttonNames[i].setPosition(sf::Vector2f(350.f, 130.f + (120.f * i)));
+			m_buttonNames[i].setFont(m_font);
+			m_buttonNames[i].setCharacterSize(42u);
+			m_buttonNames[i].setOutlineColor(sf::Color::Black);
+			m_buttonNames[i].setOutlineThickness(2u);
+		}
+		m_buttonNames[0].setString("Play");
+		m_buttonNames[1].setString("Edit");
+		m_buttonNames[2].setString("Quit");
+
+
+	}
+	void events(sf::Event t_event)
+	{
+		if (t_event.type == sf::Event::MouseMoved)
+		{
+			m_mousePos = { static_cast<float>(t_event.mouseMove.x),static_cast<float>(t_event.mouseMove.y) };
+		}
+	}
+	void update()
+	{
+		for (int i = 0; i < BUTTON_AMOUNT; i++)
+		{
+			if (m_buttons[i].getGlobalBounds().contains(m_mousePos))
+			{
+				m_buttons[i].setFillColor(sf::Color(255, 255, 255, 180));
+			}
+			else
+			{
+				m_buttons[i].setFillColor(sf::Color(255, 255, 255, 255));
+			}
+		}
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+		{
+			for (int i = 0; i < BUTTON_AMOUNT; i++)
+			{
+				if (m_buttons[i].getGlobalBounds().contains(m_mousePos))
+				{
+					if (i == 0)
+					{
+						mainMenu = false;
+						levelEditorActive = false;
+					}
+					if (i == 1)
+					{
+						mainMenu = false;
+						levelEditorActive = true;
+					}
+					if (i == 2)
+					{
+						closeGame = true;
+					}
+				}
+			}
+		}
+	}
+	void render(sf::RenderWindow& t_window)
+	{
+		for (int i = 0; i < BUTTON_AMOUNT; i++)
+		{
+			t_window.draw(m_buttons[i]);
+			t_window.draw(m_buttonNames[i]);
+		}
+	}
+private:
+	static const int BUTTON_AMOUNT{ 3 };
+	sf::RectangleShape m_buttons[BUTTON_AMOUNT];
+	sf::Text m_buttonNames[BUTTON_AMOUNT];
+	sf::Font m_font;
+
+	sf::Vector2f m_mousePos{ 0.f,0.f };
+};
 
 class LevelEditor
 {
@@ -299,6 +389,15 @@ public:
 	sf::View view;
 	float randomNum;
 
+
+	sf::Sprite m_playerS;
+	sf::Texture m_playerT;
+	float delay{ 0.125f };
+	float frameTimer{ 0.f };
+	int currentFrame{ 0 };
+	int frameHeight{ 0 };
+
+
 	sf::RectangleShape playerShape;
 
 	float velocityX = 0, velocityY = 0, gravity = 0.3;
@@ -308,12 +407,15 @@ public:
 
 	sf::RectangleShape level[numRows][numCols];
 
-	
+	//sf::Sprite bodies[numRows][numCols];
+	sf::Texture tile; sf::Texture jump; sf::Texture timeTile; sf::Texture death; sf::Texture win;
+
+	Menu menu;
 	LevelEditor editor;
 
 	Game()
 	{
-
+		menu.init();
 		window.create(sf::VideoMode(800, 600), "Endless Runner Game");
 
 		if(!Font.loadFromFile("PixelSans.ttf"))
@@ -325,11 +427,27 @@ public:
 		winText.setCharacterSize(32u);
 		winText.setString("you win");
 		winText.setFillColor(sf::Color::Transparent);
-		
+		if (!m_playerT.loadFromFile("player.png"))
+		{
+			std::cout << "DIDNT LOAD Player\n";
+		}
+		m_playerS.setTexture(m_playerT);
+		m_playerS.setTextureRect(sf::IntRect(0, 0, 375, 666));
+		m_playerS.setScale(0.08f, 0.08f);
+		m_playerS.setOrigin(115.f, 235.f);
+
+		tile.loadFromFile("tileNormal.png");
+		jump.loadFromFile("jumpTile.png");
+		timeTile.loadFromFile("time.png");
+		death.loadFromFile("death.png");
+		win.loadFromFile("win.png");
+
+
 		editor.init();
 	}
 	void init()
 	{
+		resetLevel = false;
 		slowMoTimeLeft = 0;
 		ExtraJumpTimeLeft = 0;
 		winText.setFillColor(sf::Color::Transparent);
@@ -338,6 +456,38 @@ public:
 		playerShape.setSize(sf::Vector2f(20, 20));
 		playerShape.setPosition(160, 500);
 
+		//for (int col = 0; col < numCols; col++)
+		//{
+		//	for (int row = 0; row < numRows; row++)
+		//	{
+		//		//bodies[row][col].setPosition(col * 70, row * 30);
+
+		//		if (levelData[row][col] == 0)
+		//		{
+		//			continue;
+		//		}
+		//		else if (levelData[row][col] == 1)
+		//		{
+		//			bodies[row][col].setTexture(tile);
+		//		}
+		//		else if (levelData[row][col] == 2)
+		//		{
+		//			bodies[row][col].setTexture(death);
+		//		}
+		//		else if (levelData[row][col] == 3)
+		//		{
+		//			bodies[row][col].setTexture(win);
+		//		}
+		//		else if (levelData[row][col] == 4)
+		//		{
+		//			bodies[row][col].setTexture(timeTile);
+		//		}
+		//		else if (levelData[row][col] == 5)
+		//		{
+		//			bodies[row][col].setTexture(jump);
+		//		}
+		//	}
+		//}
 			for (int col = 0; col < numCols; col++)
 			{
 				for (int row = 0; row < numRows; row++)
@@ -415,7 +565,11 @@ public:
 					window.close();
 			}
 			
-			if (levelEditorActive)
+			if (mainMenu)
+			{
+				menu.events(event);
+			}
+			else if (levelEditorActive)
 			{
 				editor.events(event);
 			}
@@ -424,18 +578,37 @@ public:
 
 			if (timeSinceLastUpdate > timePerFrame)
 			{ // update =====================================================================
-
+				if (closeGame)
+					window.close();
+				if (resetLevel)
+					init();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab))
+				{
+					textureMode = !textureMode;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+				{
+					levelEditorActive = false;
+					mainMenu = true;
+					menu.init();
+				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
 				{
 					levelEditorActive = false;
+					mainMenu = false;
 					init();
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Equal))
 				{
 					levelEditorActive = true;
+					mainMenu = false;
 					init();
 				}
-				if (levelEditorActive)
+				if (mainMenu)
+				{
+					menu.update();
+				}
+				else if (levelEditorActive)
 				{
 					editor.update();
 				}
@@ -446,6 +619,16 @@ public:
 					if (ExtraJumpTimeLeft > 0)
 						ExtraJumpTimeLeft--;
 
+					frameTimer += delay;
+					if (static_cast<int>(frameTimer) >= 1)
+					{
+						frameTimer = 0;
+						currentFrame++;
+						if (currentFrame > 7)
+							currentFrame = 0;
+						m_playerS.setTextureRect(sf::IntRect((375 * currentFrame), frameHeight * 666, 375, 666));
+
+					}
 
 					for (int row = 0; row < numRows; row++)
 					{
@@ -482,6 +665,8 @@ public:
 
 					velocityY = velocityY + gravity;
 					playerShape.move(0, velocityY);
+
+					m_playerS.setPosition(playerShape.getPosition());
 
 					gravity = 0.6;
 					for (int row = 0; row < numRows; row++)
@@ -521,7 +706,6 @@ public:
 										if (playerShape.getGlobalBounds().intersects(level[row][col].getGlobalBounds()))
 										{
 											init();
-
 										}
 
 									}
@@ -567,7 +751,11 @@ public:
 
 				
 				window.clear();
-				if (levelEditorActive)
+				if (mainMenu)
+				{
+					menu.render(window);
+				}
+				else if (levelEditorActive)
 				{
 					editor.draw(window);
 				}
@@ -578,9 +766,23 @@ public:
 						for (int col = 0; col < numCols; col++)
 						{
 							window.draw(level[row][col]);
+
+							if (textureMode)
+							{
+								//bodies[row][col].setPosition(level[row][col].getPosition());
+								//window.draw(bodies[row][col]);
+							}
 						}
 					}
-					window.draw(playerShape);
+					if (textureMode)
+					{
+						window.draw(m_playerS);
+					}
+					else
+					{
+						window.draw(playerShape);
+
+					}
 
 					window.draw(winText);
 				}
