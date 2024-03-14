@@ -264,6 +264,12 @@ class LevelEditor
 public:
 	void init() 
 	{
+		tile.loadFromFile("tileNormal.png");
+		jump.loadFromFile("jumpTile.png");
+		timeTile.loadFromFile("time.png");
+		death.loadFromFile("death.png");
+		win.loadFromFile("win.png");
+
 		m_maxLevel = FileEditing::getLevelAmount() - 1;
 
 		if (!m_font.loadFromFile("PixelSans.ttf"))
@@ -412,7 +418,11 @@ public:
 	}
 	void update() 
 	{
-		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab))
+		{
+			textureMode = !textureMode;
+		}
+
 		for (int i = 0; i < BUTTON_AMOUNT; i++)
 		{
 			if (m_button[i].getGlobalBounds().contains(m_mousePos))
@@ -535,6 +545,7 @@ public:
 	}
 	void draw(sf::RenderWindow& t_window)
 	{
+		sf::Sprite drawableOverLay;
 		for (int col = 0; col < numCols; col++)
 		{
 			for (int row = 0; row < numRows; row++)
@@ -543,6 +554,8 @@ public:
 				level[row][col].setOutlineThickness(1u);
 				if (levelData[row][col] == 1)
 				{
+					drawableOverLay.setColor(sf::Color(255, 255, 255, 255));
+					drawableOverLay.setTexture(tile);
 
 					level[row][col].setSize(sf::Vector2f(70, 30));
 					level[row][col].setPosition(col * 70, row * 30);
@@ -550,6 +563,7 @@ public:
 				}
 				if (levelData[row][col] == 0)
 				{
+					drawableOverLay.setColor(sf::Color(0,0,0,0));
 
 					level[row][col].setSize(sf::Vector2f(70, 30));
 					level[row][col].setPosition(col * 70, row * 30);
@@ -557,6 +571,9 @@ public:
 				}
 				if (levelData[row][col] == 2)
 				{
+					drawableOverLay.setColor(sf::Color(255, 255, 255, 255));
+					drawableOverLay.setTexture(death);
+
 					level[row][col].setSize(sf::Vector2f(70, 30));
 					level[row][col].setPosition(col * 70, row * 30);
 
@@ -565,6 +582,8 @@ public:
 				}
 				if (levelData[row][col] == 3)
 				{
+					drawableOverLay.setColor(sf::Color(255, 255, 255, 255));
+					drawableOverLay.setTexture(win);
 					level[row][col].setSize(sf::Vector2f(70, 30));
 					level[row][col].setPosition(col * 70, row * 30);
 
@@ -573,6 +592,8 @@ public:
 
 				if (levelData[row][col] == 4)
 				{
+					drawableOverLay.setColor(sf::Color(255, 255, 255, 255));
+					drawableOverLay.setTexture(timeTile);
 					level[row][col].setSize(sf::Vector2f(70, 30));
 					level[row][col].setPosition(col * 70, row * 30);
 
@@ -581,6 +602,8 @@ public:
 				}
 				if (levelData[row][col] == 5)
 				{
+					drawableOverLay.setColor(sf::Color(255, 255, 255, 255));
+					drawableOverLay.setTexture(jump);
 					level[row][col].setSize(sf::Vector2f(70, 30));
 					level[row][col].setPosition(col * 70, row * 30);
 
@@ -594,7 +617,14 @@ public:
 					level[row][col].setFillColor(sf::Color(255,255,255,80));
 				}
 
+				drawableOverLay.setPosition(level[row][col].getPosition());
+
+				if (textureMode)
+					level[row][col].setFillColor(sf::Color::Black);
+
 				t_window.draw(level[row][col]);
+				if(textureMode)
+					t_window.draw(drawableOverLay);
 			}
 		}
 		t_window.draw(m_leftMenu);
@@ -603,6 +633,23 @@ public:
 		{
 			t_window.draw(m_button[i]);
 			t_window.draw(m_buttonOverlay[i]);
+			if (textureMode)
+			{
+				sf::Sprite newSprite;
+				if(i == 0)
+					newSprite.setTexture(tile);
+				else if (i == 1)
+					newSprite.setTexture(death);
+				else if (i == 2)
+					newSprite.setTexture(win);
+				else if (i == 3)
+					newSprite.setTexture(timeTile);
+				else if (i == 4)
+					newSprite.setTexture(jump);
+				newSprite.setPosition(m_button[i].getPosition() + sf::Vector2f(20.f,0.f));
+
+				t_window.draw(newSprite);
+			}
 		}
 		t_window.draw(m_dispString);
 
@@ -619,6 +666,10 @@ public:
 		}
 	}
 private:
+	sf::Texture tile; sf::Texture jump; sf::Texture timeTile; sf::Texture death; sf::Texture win;
+	bool textureMode{ false };
+
+
 	sf::RectangleShape level[numRows][numCols];
 	sf::Vector2f levelMoveOffset[numRows][numCols];
 
